@@ -1,5 +1,5 @@
 # SQL_Finance-analysis
-# There are 3 requirements in this session : 
+# There are many requirements in this session : 
 # The First : 
 As a product owner, he/she want to generate a report of individual product sales (aggregated on a monthly 
 basis at the product code level) for Croma India customer for FY=2021 so that he/she can track individual 
@@ -23,3 +23,7 @@ can track how much sales this particular customer is generating for AtliQ and ma
 The report should have the following fields,
 1. Month
 2. Total gross sales amount to Croma India in this month
+
+# 4nd : Get top 5 market by net sales in fiscal year 2021 with index 
+The data has2 fact tables as post_invoice_sale and pre_invoice_sale. So that product owner wants to get the net sale
+after deductable % from discount.
