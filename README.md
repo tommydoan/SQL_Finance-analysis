@@ -28,4 +28,4 @@ The report should have the following fields,
 The data has 2 fact tables as post_invoice_sale and pre_invoice_sale. So that product owner wants to get the net sale
 after deductable % from discount.
 
-# The 5th : Get top 10 customer by % over total global of net sales ( Attached image of chart 
+# The 5th : Get top 10 customer by % over total global of net sales ( Attached image of chart )
