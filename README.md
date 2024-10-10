@@ -15,7 +15,7 @@ The report should have the following fields,
 # The Second :
 Generate a yearly report for Croma India where there are two columns
 1. Fiscal Year
-2. 2. Total Gross Sales amount In that year from Croma
+2. Total Gross Sales amount In that year from Croma
 
 # The Third :
 As a product owner, he/she need an aggregate monthly gross sales report for Croma India customer so that they
