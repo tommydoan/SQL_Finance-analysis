@@ -1,0 +1,10 @@
+# Get the total of gross sale by month fro customer Croma India
+
+SELECT 
+    month, 
+    ROUND(SUM(gross_sales),2) AS total_gross_sale
+FROM
+    gdb0041.net_gross_sales
+WHERE customer = "Croma" AND market = "india"
+GROUP BY month 
+ORDER BY total_gross_sale DESC
