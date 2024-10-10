@@ -1,0 +1,87 @@
+# Create the gross_sale_preInvoice with first discount name pre_invoice_deduction_pct
+WITH CTE AS
+(SELECT 
+    s.*, p.pre_invoice_discount_pct
+FROM
+    gdb0041.net_gross_sales s
+JOIN fact_pre_invoice_deductions p
+USING(customer_code, fiscal_year) 
+)
+SELECT *,
+	gross_sales*(1-pre_invoice_discount_pct) AS gross_sale_preInv
+FROM CTE
+---
+# Create net sale after deduct from the second discount call post_invoice_discount 
+WITH CTE AS 
+(SELECT 
+    s.*, i.discounts_pct + i.other_deductions_pct AS total_post_invoice_deduction
+FROM
+    gdb0041.gross_sale_preinvoice s
+JOIN fact_post_invoice_deductions i
+USING(customer_code, product_code, date) 
+)
+SELECT *,
+	ROUND(gross_sale_preInvoice*(1-total_post_invoice_deduction),2) AS net_sales
+FROM CTE 
+ORDER BY date ASC
+---
+#Create view table for net_sale to reduce code for many next step 
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `net_sale` AS
+WITH CTE AS 
+(SELECT 
+    s.*, i.discounts_pct + i.other_deductions_pct AS total_post_invoice_deduction
+FROM
+    gdb0041.gross_sale_preinvoice s
+JOIN fact_post_invoice_deductions i
+USING(customer_code, product_code, date) 
+)
+SELECT *,
+	ROUND(gross_sale_preInvoice*(1-total_post_invoice_deduction),2) AS net_sales
+FROM CTE 
+ORDER BY date ASC
+---
+### Get top 5 market by net sales in fiscal year 2021 with index :
+
+WITH CTE AS
+(SELECT 
+    fiscal_year, market, 
+    ROUND(SUM(net_sales)/1000000,2) as net_sale_mil
+FROM
+    gdb0041.net_sale
+WHERE fiscal_year = 2021
+GROUP BY market
+ORDER BY net_sale_mil DESC
+LIMIT 5
+)
+SELECT *,
+		Rank() OVER(ORDER BY net_sale_mil DESC ) AS ranking
+FROM CTE
+
+# Then create Stored Proceduces for top n revenue in market as particular year
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get top n market revenue in particular year`(
+	In_top INT, In_fiscal_year varchar(45)
+)
+BEGIN
+### Get top 5 market by net sales in fiscal year 2021 with index :
+
+WITH CTE AS
+(SELECT 
+    market, 
+    ROUND(SUM(net_sales)/1000000,2) as net_sale_mil
+FROM
+    gdb0041.net_sale
+WHERE fiscal_year = In_fiscal_year
+GROUP BY market
+ORDER BY net_sale_mil DESC
+LIMIT In_top
+)
+SELECT *,
+		Rank() OVER(ORDER BY net_sale_mil DESC ) AS ranking
+FROM CTE;
+END
+
+
