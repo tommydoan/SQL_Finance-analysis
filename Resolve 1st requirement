@@ -1,0 +1,101 @@
+#Resolve the first requirement : Get the report for customer name "Croma" in market "India" following many order below :
+1. Month
+2. Product Name
+3. Variant
+4. Sold Quantity
+5. Gross Price Per Item
+6. Gross Price Total
+--------
+### Fristly , created the column fiscal year from date.
+### The fiscal_year is created from the the day after be added 4 month. That's mean usually, the year present for finance will count after 4 month of the original day.
+SELECT 
+    *,
+    YEAR(DATE_ADD(date, INTERVAL 4 MONTH)) AS fiscal_year
+FROM
+    gdb0041.fact_sales_monthly
+
+----
+# Create the column fiscal year in the table : "fact_sales_monthly" . The purpose to optimize the performance of Analyze and will not take a long time to query again an again
+----
+### Then I will pull out all informations need and do the JOIN for many table to get the result.
+SELECT 
+    date, 
+    MONTH(date) AS month,
+## Create the quater in fiscal year for every quater and match with new fiscal year.
+	(CASE
+            WHEN (MONTH(date) IN (9 , 10, 11)) THEN 'Q1'
+            WHEN (MONTH(date) IN (12 , 1, 2)) THEN 'Q2'
+            WHEN (MONTH(date) IN (3 , 4, 5)) THEN 'Q3'
+            ELSE 'Q4'
+	END) AS quater,
+    f.fiscal_year,
+    f.product_code, customer_code,
+    market, 
+    product, variant, 
+    sold_quantity, gross_price,
+    ROUND((sold_quantity * gross_price), 2) AS gross_sale
+FROM
+    fact_sales_monthly f
+        JOIN
+    dim_product USING (product_code)
+        JOIN
+    fact_gross_price g ON f.product_code = g.product_code
+        AND f.fiscal_year = g.fiscal_year
+        JOIN dim_customer 
+        USING(customer_code)
+ORDER BY date ASC
+---
+### Create the view table call : net_gross_sales to reduce the size of code in the many next step 
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `net_gross_sales` AS
+    SELECT 
+        `s`.`date` AS `date`,
+        MONTH(`s`.`date`) AS `month`,
+        (CASE
+            WHEN (MONTH(`s`.`date`) IN (9 , 10, 11)) THEN 'Q1'
+            WHEN (MONTH(`s`.`date`) IN (12 , 1, 2)) THEN 'Q2'
+            WHEN (MONTH(`s`.`date`) IN (3 , 4, 5)) THEN 'Q3'
+            ELSE 'Q4'
+        END) AS `quater`,
+        `s`.`fiscal_year` AS `fiscal_year`,
+        `s`.`product_code` AS `product_Code`,
+        `s`.`customer_code` AS `customer_code`,
+        `dim_product`.`product` AS `product`,
+        `dim_product`.`variant` AS `variant`,
+        `c`.`customer` AS `customer`,
+        `c`.`market` AS `market`,
+        `s`.`sold_quantity` AS `sold_quantity`,
+        `f`.`gross_price` AS `gross_price`,
+        (`s`.`sold_quantity` * `f`.`gross_price`) AS `gross_sales`
+    FROM
+        (((`fact_sales_monthly` `s`
+        JOIN `fact_gross_price` `f` ON (((`s`.`fiscal_year` = `f`.`fiscal_year`)
+            AND (`s`.`product_code` = `f`.`product_code`))))
+        JOIN `dim_product` ON ((`s`.`product_code` = `dim_product`.`product_code`)))
+        JOIN `dim_customer` `c` ON ((`s`.`customer_code` = `c`.`customer_code`)))
+----
+#Get the result with customer and market is Croma India and fiscal_year is 2021  
+SELECT 
+    *
+FROM
+  ## Using view to get the new table for this session
+    gdb0041.net_gross_sales
+WHERE fiscal_year = 2021 AND customer = "Croma" AND market ="India"
+---
+#The option from product owner to filter any market, customer or fiscal year in the future. So that
+# I will create the stored procedures for them.
+### ---> Create the stored procedures name : get_net_gross_sale_by_Fy_and_others
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_net_sale_by_Fy_and_others`(
+	In_market varchar(45), In_customer varchar(45), In_fiscal_year INT
+)
+BEGIN
+SELECT *
+FROM net_gross_sales
+WHERE fiscal_year = In_fiscal_year AND market = In_market AND customer = In_customer;
+END
+
+
+
