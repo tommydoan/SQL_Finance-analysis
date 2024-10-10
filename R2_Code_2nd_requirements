@@ -1,0 +1,58 @@
+### The Second :
+Generate a yearly report for Croma India where there are two columns
+1. Fiscal Year
+2. Total Gross Sales amount In that year from Croma
+----- 
+# Get the result total of gross sale , group by fiscal year
+SELECT 
+    fiscal_year, customer, market,
+    ROUND(SUM(gross_sales),2) AS total_gross_sales
+FROM
+    gdb0041.net_gross_sales
+WHERE customer = "Croma" AND market = "India"
+GROUP BY fiscal_year, customer, market
+
+-----
+
+# Option1 : Create the ranking of table for the order of gross_sale as fiscal_year 
+
+WITH CTE AS
+(SELECT 
+    fiscal_year, customer, market,
+    ROUND(SUM(gross_sales),2) AS total_gross_sales
+FROM
+    gdb0041.net_gross_sales
+WHERE customer = "Croma" AND market = "India"
+GROUP BY fiscal_year, customer, market 
+)
+SELECT *,
+	DENSE_RANK () OVER (ORDER BY total_gross_sales DESC ) AS ranking
+FROM CTE
+
+---
+# Option 2 : Create the Stored procedures to maximize the options to get the result with customer, market 
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_total_gross_sale_by_customer_market_in_allYear`(
+	In_customer varchar(45), In_market varchar(45)
+    )
+BEGIN
+WITH CTE AS
+(SELECT 
+    fiscal_year, customer, market,
+    ROUND(SUM(gross_sales),2) AS total_gross_sales
+FROM
+    gdb0041.net_gross_sales
+WHERE customer = In_customer AND market = In_market
+GROUP BY fiscal_year, customer, market 
+)
+SELECT *,
+	DENSE_RANK () OVER (ORDER BY total_gross_sales DESC ) AS ranking
+FROM CTE;
+END
+
+---> call gdb0041.get_total_gross_sale_by_customer_market_in_allYear('amazon', 'usa');
+
+
+
+
+
