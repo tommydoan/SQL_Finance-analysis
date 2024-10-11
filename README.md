@@ -12,7 +12,7 @@ The report should have the following fields,
 5. Gross Price Per Item
 6. Gross Price Total
 
-# The Second :
+### The Second :
 Generate a yearly report for Croma India where there are two columns
 1. Fiscal Year
 2. Total Gross Sales amount In that year from Croma
