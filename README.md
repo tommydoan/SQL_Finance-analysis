@@ -32,8 +32,9 @@ after deductable % from discount.
 Project owner ask me to generate the report to show top 10 customers who contribute each percentage of revenue on
 the total global revenue
 
-## The 6th requirement :Get TOP 3 customer revenue by region and fiscal year in 2021 
-Similarly, this question purpose to get the revenue of top 3 customer by region and choosee the specific fiscal year 2021.
+## The 6th requirement :#Get TOP 5 customer revenue by region and fiscal year in 2021 (attached pie chart )
+Project owner wants to pull out the top customers revenue by each region and need to be ranking by Decending revenue.
+Then , create the pie chat to show specific contribution of customers in each region.
 
 ## The 7th requirement : Get TOP n products in each division by their quantity sold in a given financial year
 Product owner want to get the report with whatever top n product they want to filter out each division by the quantity
