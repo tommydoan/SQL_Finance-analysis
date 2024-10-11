@@ -1,0 +1,19 @@
+#Get TOP 3 customer revenue by region and fiscal year in 2021 
+
+WITH CTE AS
+(SELECT 
+    region,
+    ROUND(SUM(net_sale)/1000000,2) As total_net_sale_mil
+FROM
+    gdb0041.net_sale
+JOIN dim_customer d
+USING(customer_code)
+WHERE fiscal_year = 2021
+GROUP BY region
+ORDER BY total_net_sale_mil DESC
+LIMIT 3
+)
+SELECT *,
+	total_net_sale_mil*100/SUM(total_net_sale_mil) OVER () AS contribution_pct,
+    RANK () OVER (ORDER BY total_net_sale_mil DESC) AS Ranking
+FROM CTE 
