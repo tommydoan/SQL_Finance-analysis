@@ -1,0 +1,23 @@
+#Retrieve the top 2 markets in every region by their gross sales amount in FY=2021
+
+WITH CTE1 AS
+(SELECT 
+    d.region, d.market, 
+    SUM(gross_sale)/1000000 As total_gross_sale
+FROM
+	 gross_sale
+JOIN dim_customer d
+USING(customer_code)
+WHERE fiscal_year = 2021 
+GROUP BY market, region
+),
+CTE2 AS
+(
+SELECT *,
+-- 	total_quantity*100/SUM(total_quantity) OVER (PARTITION BY division) AS contribution_pct,
+    RANK () OVER (PARTITION BY region ORDER BY total_gross_sale DESC ) AS ranking
+FROM CTE1 
+)
+SELECT *
+FROM CTE2
+WHERE ranking <=2
