@@ -31,3 +31,13 @@ after deductable % from discount.
 ## The 5th requirement : Get top 10 customer by % over total global of net sales ( Attached image of chart )
 Project owner ask me to generate the report to show top 10 customers who contribute each percentage of revenue on
 the total global revenue
+
+## The 6th requirement :Get TOP 3 customer revenue by region and fiscal year in 2021 
+Similarly, this question purpose to get the revenue of top 3 customer by region and choosee the specific fiscal year 2021.
+
+## The 7th requirement : Get TOP n products in each division by their quantity sold in a given financial year
+Product owner want to get the report with whatever top n product they want to filter out each division by the quantity
+in the particular financial year.
+
+## The 8th requirement : Retrieve the top 2 markets in every region by their gross sales amount in FY=2021
+try to get top 2 markets in each region throught out the gross sales and specific fiscal year 2021
