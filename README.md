@@ -36,6 +36,6 @@ the total global revenue
 Project owner wants to pull out the top customers revenue by each region and need to be ranking by Decending revenue.
 Then , create the pie chat to show specific contribution of customers in each region.
 
-## The 7th requirement : Get TOP n products in each division by their quantity sold in a given financial year (attached pie chart )
-Product owner want to get the report with whatever top n product they want to filter out each division by the quantity
+## The 7th requirement : Get TOP 3 products in each division by their sold quantity in a given financial year (attached pie chart )
+Product owner wants to get the report with top 3 product and be filtered out by each division with the sold quantity
 in the particular financial year.
