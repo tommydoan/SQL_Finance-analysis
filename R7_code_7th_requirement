@@ -1,6 +1,6 @@
 #Get TOP n products in each division by their quantity sold in a given financial year
 
-WITH CTE AS
+WITH CTE1 AS
 (SELECT 
     p.division, p.product,
     SUM(sold_quantity) As total_quantity
@@ -11,7 +11,13 @@ USING(product_code)
 WHERE fiscal_year = 2021
 GROUP BY p.division, p.product
 ORDER BY total_quantity DESC
-)
+),
+CTE2 AS
+(
 SELECT *,
     RANK () OVER (PARTITION BY division ORDER BY total_quantity DESC ) AS ranking
-FROM CTE 
+FROM CTE1 
+)
+SELECT *
+FROM CTE2
+WHERE ranking <=5
