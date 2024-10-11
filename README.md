@@ -29,3 +29,5 @@ The data has 2 fact tables as post_invoice_sale and pre_invoice_sale. So that pr
 after deductable % from discount.
 
 ## The 5th requirement : Get top 10 customer by % over total global of net sales ( Attached image of chart )
+Project owner ask me to generate the report to show top 10 customers who contribute each percentage of revenue on
+the total global revenue
