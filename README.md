@@ -40,5 +40,5 @@ Then , create the pie chat to show specific contribution of customers in each re
 Product owner wants to get the report with top 3 product and be filtered out by each division with the sold quantity
 in the particular financial year.
 
-##Retrieve the top 2 markets in every region by their gross sales amount in FY=2021
+## The 8 th requirement : Retrieve the top 2 markets in every region by their gross sales amount in FY=2021
 Product owner wants to get the top 2 markets in each region by gross sale. This time, they forcus on gross sale and FY is 2021
