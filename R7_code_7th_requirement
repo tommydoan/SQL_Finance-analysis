@@ -1,23 +1,25 @@
 #Get TOP n products in each division by their quantity sold in a given financial year
+---> Because the requirement ask for the total sold quantity so that this query will focus
+on the fact sale monthly. I will not using the table of netsale for this case.
 
 WITH CTE1 AS
 (SELECT 
     p.division, p.product,
     SUM(sold_quantity) As total_quantity
 FROM
-    gdb0041.net_sale
+	 fact_sales_monthly
 JOIN dim_product p
 USING(product_code)
-WHERE fiscal_year = 2021
+WHERE fiscal_year = 2021 
 GROUP BY p.division, p.product
-ORDER BY total_quantity DESC
 ),
 CTE2 AS
 (
 SELECT *,
+	total_quantity*100/SUM(total_quantity) OVER (PARTITION BY division) AS contribution_pct,
     RANK () OVER (PARTITION BY division ORDER BY total_quantity DESC ) AS ranking
 FROM CTE1 
 )
 SELECT *
 FROM CTE2
-WHERE ranking <=5
+WHERE ranking <=3
